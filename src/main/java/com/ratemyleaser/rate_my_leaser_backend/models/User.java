@@ -17,24 +17,26 @@ import lombok.Setter;
 @Entity
 @Table(name = "users")
 @Getter
-@Setter 
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class User {
     @Id
     @GeneratedValue
     private UUID id;
-    
-    @Column(name="first_name", nullable = false)
+
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name="last_name", nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @Column(length = 255, unique = true, nullable = false)
     private String email;
+
+    @Column(length = 255, nullable = false)
+    private String password;
 
     @Column(name = "phonenumber", unique = true, length = 20)
     private String phoneNumber;
@@ -46,7 +48,6 @@ public class User {
     private boolean isAgent;
 
     @Column(name = "created_at", nullable = false)
-    @GeneratedValue(generator = "localDateTime")
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 }

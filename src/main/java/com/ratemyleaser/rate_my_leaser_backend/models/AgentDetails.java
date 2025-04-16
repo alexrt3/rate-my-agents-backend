@@ -27,7 +27,7 @@ public class AgentDetails {
 
     @Id
     private UUID userId;
-    
+
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -35,7 +35,7 @@ public class AgentDetails {
 
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified;
-    
+
     @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
