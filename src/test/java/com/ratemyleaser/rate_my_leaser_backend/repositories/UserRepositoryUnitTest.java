@@ -9,6 +9,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
+import com.ratemyleaser.rate_my_leaser_backend.utils.TestDataFactory;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,15 +25,7 @@ public class UserRepositoryUnitTest {
 
     @Test
     public void shouldReturnExistingUserInRepositoryByEmail() {
-        User user = User.builder()
-                .firstName("John")
-                .lastName("Smith")
-                .email("test@test.com")
-                .password("password123")
-                .userName("testUser")
-                .phoneNumber("1231231234")
-                .isAgent(false)
-                .build();
+        User user = TestDataFactory.createUser();
 
         userRepository.save(user);
         Optional<User> retrievedUser = userRepository.findUserByEmail("test@test.com");
@@ -56,17 +50,8 @@ public class UserRepositoryUnitTest {
 
     @Test
     public void shouldReturnExistingUserInRepositoryById() {
-        UUID userId = UUID.randomUUID();
 
-        User user = User.builder()
-                .firstName("John")
-                .lastName("Smith")
-                .email("test@test.com")
-                .password("password123")
-                .userName("testUser")
-                .phoneNumber("1231231234")
-                .isAgent(false)
-                .build();
+        User user = TestDataFactory.createUser();
 
         User savedUser = userRepository.save(user);
         UUID savedUserId = savedUser.getId();
@@ -94,15 +79,7 @@ public class UserRepositoryUnitTest {
 
     @Test
     public void shouldReturnTrueIfUserExistsByEmail() {
-        User user = User.builder()
-                .firstName("John")
-                .lastName("Smith")
-                .email("test@test.com")
-                .password("password123")
-                .userName("testUser")
-                .phoneNumber("1231231234")
-                .isAgent(false)
-                .build();
+        User user = TestDataFactory.createUser();
 
         userRepository.save(user);
         Boolean userExists = userRepository.existsByEmail("test@test.com");
@@ -112,15 +89,7 @@ public class UserRepositoryUnitTest {
 
     @Test
     public void shouldReturnFalseIfUserDoesNotExistsByEmail() {
-        User user = User.builder()
-                .firstName("John")
-                .lastName("Smith")
-                .email("test@test.com")
-                .password("password123")
-                .userName("testUser")
-                .phoneNumber("1231231234")
-                .isAgent(false)
-                .build();
+        User user = TestDataFactory.createUser();
 
         userRepository.save(user);
         Boolean userExists = userRepository.existsByEmail("test123@test.com");
