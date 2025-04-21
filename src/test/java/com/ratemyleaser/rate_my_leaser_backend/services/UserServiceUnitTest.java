@@ -17,7 +17,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ratemyleaser.rate_my_leaser_backend.dtos.UserRegistrationRequest;
 import com.ratemyleaser.rate_my_leaser_backend.exceptions.EmailAlreadyExistsException;
+import com.ratemyleaser.rate_my_leaser_backend.mappers.UserMapper;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
 import com.ratemyleaser.rate_my_leaser_backend.repositories.UserRepository;
 import com.ratemyleaser.rate_my_leaser_backend.utils.TestDataFactory;
@@ -35,13 +37,13 @@ public class UserServiceUnitTest {
 
     @Test
     public void shouldReturnSuccesfullyRegisteredUser() {
-        User user = TestDataFactory.createUser();
+        UserRegistrationRequest request = TestDataFactory.createUserRegistrationRequest();
+        User user = UserMapper.toEntity(request);
 
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User expectedUser = userService.registerUser(user.getFirstName(), user.getLastName(), user.getEmail(),
-                user.getPassword(), user.getPhoneNumber(), user.getUserName());
+        User expectedUser = userService.registerUser(request);
 
         verify(userRepository).existsByEmail(user.getEmail());
         verify(userRepository, times(1)).save(any(User.class));
@@ -58,12 +60,11 @@ public class UserServiceUnitTest {
 
     @Test
     public void shouldThrowExceptionWhenRegisteringUserIsCalledAndEmailExists() {
-        User user = TestDataFactory.createUser();
+        UserRegistrationRequest request = TestDataFactory.createUserRegistrationRequest();
 
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
-        assertThatThrownBy(() -> userService.registerUser(user.getFirstName(), user.getLastName(), user.getEmail(),
-                user.getPassword(), user.getPhoneNumber(), user.getUserName()))
+        assertThatThrownBy(() -> userService.registerUser(request))
                 .isInstanceOf(EmailAlreadyExistsException.class)
                 .hasMessage("The email test@test.com is already in use.");
 
@@ -73,13 +74,13 @@ public class UserServiceUnitTest {
     @Test
     public void shouldThrowDataAccessExceptionWhenRegisteringUserAndDbIsDown() {
         User user = TestDataFactory.createUser();
+        UserRegistrationRequest request = TestDataFactory.createUserRegistrationRequest();
 
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenThrow(new DataAccessException("Simulated DB failure") {
         });
 
-        assertThatThrownBy(() -> userService.registerUser(user.getFirstName(), user.getLastName(), user.getEmail(),
-                user.getPassword(), user.getPhoneNumber(), user.getUserName())).isInstanceOf(DataAccessException.class);
+        assertThatThrownBy(() -> userService.registerUser(request)).isInstanceOf(DataAccessException.class);
 
         verify(userRepository).existsByEmail(user.getEmail());
         verify(userRepository).save(any(User.class));

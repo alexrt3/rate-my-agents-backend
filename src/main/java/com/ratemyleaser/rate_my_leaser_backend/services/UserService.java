@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.ratemyleaser.rate_my_leaser_backend.dtos.UserRegistrationRequest;
 import com.ratemyleaser.rate_my_leaser_backend.exceptions.EmailAlreadyExistsException;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
 import com.ratemyleaser.rate_my_leaser_backend.repositories.UserRepository;
@@ -21,27 +22,26 @@ public class UserService {
         return userRepository.findUserByEmail(email).filter(user -> user.getPassword().equals(password));
     }
 
-    public User registerUser(String firstName, String lastName, String email, String password, String phoneNumber,
-            String userName) {
+    public User registerUser(UserRegistrationRequest userInfo) {
 
-        if (userRepository.existsByEmail(email)) {
-            throw new EmailAlreadyExistsException(email);
+        if (userRepository.existsByEmail(userInfo.getEmail())) {
+            throw new EmailAlreadyExistsException(userInfo.getEmail());
         }
 
         try {
             User user = User.builder()
-                    .firstName(firstName)
-                    .lastName(lastName)
-                    .email(email)
-                    .password(password)
-                    .phoneNumber(phoneNumber)
-                    .userName(userName)
-                    .isAgent(false)
+                    .firstName(userInfo.getFirstName())
+                    .lastName(userInfo.getLastName())
+                    .email(userInfo.getEmail())
+                    .password(userInfo.getPassword())
+                    .phoneNumber(userInfo.getPhoneNumber())
+                    .userName(userInfo.getUserName())
+                    .isAgent(userInfo.isAgent())
                     .build();
 
             User savedUser = userRepository.save(user);
 
-            log.info("Successfully registered user with email {}", email);
+            log.info("Successfully registered user with email {}", user.getEmail());
             return savedUser;
 
         } catch (Exception e) {
