@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ratemyleaser.rate_my_leaser_backend.dtos.UserRegistrationRequest;
-import com.ratemyleaser.rate_my_leaser_backend.models.User;
+import com.ratemyleaser.rate_my_leaser_backend.dtos.UserResponse;
 import com.ratemyleaser.rate_my_leaser_backend.services.UserService;
 
 import jakarta.validation.Valid;
@@ -26,13 +26,13 @@ public class UserController {
     }
 
     @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> registerUser(@Valid @RequestBody UserRegistrationRequest userRegistrationInfo) {
-        User registeredUser = userService.registerUser(userRegistrationInfo);
+    public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody UserRegistrationRequest userRegistrationInfo) {
+        UserResponse registeredUserResponse = userService.registerUser(userRegistrationInfo);
 
-        if (registeredUser == null) {
+        if (registeredUserResponse == null) {
             return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(registeredUser);
+        return ResponseEntity.ok(registeredUserResponse);
     }
 }

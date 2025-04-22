@@ -5,7 +5,9 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.ratemyleaser.rate_my_leaser_backend.dtos.UserRegistrationRequest;
+import com.ratemyleaser.rate_my_leaser_backend.dtos.UserResponse;
 import com.ratemyleaser.rate_my_leaser_backend.exceptions.EmailAlreadyExistsException;
+import com.ratemyleaser.rate_my_leaser_backend.mappers.UserMapper;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
 import com.ratemyleaser.rate_my_leaser_backend.repositories.UserRepository;
 
@@ -22,7 +24,7 @@ public class UserService {
         return userRepository.findUserByEmail(email).filter(user -> user.getPassword().equals(password));
     }
 
-    public User registerUser(UserRegistrationRequest userInfo) {
+    public UserResponse registerUser(UserRegistrationRequest userInfo) {
 
         if (userRepository.existsByEmail(userInfo.getEmail())) {
             throw new EmailAlreadyExistsException(userInfo.getEmail());
@@ -40,9 +42,10 @@ public class UserService {
                     .build();
 
             User savedUser = userRepository.save(user);
+            UserResponse userDto = UserMapper.toDto(savedUser);
 
             log.info("Successfully registered user with email {}", user.getEmail());
-            return savedUser;
+            return userDto;
 
         } catch (Exception e) {
             log.error("Error registering user", e);

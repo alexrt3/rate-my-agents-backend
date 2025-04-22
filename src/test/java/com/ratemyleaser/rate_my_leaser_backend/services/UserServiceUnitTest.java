@@ -18,6 +18,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ratemyleaser.rate_my_leaser_backend.dtos.UserRegistrationRequest;
+import com.ratemyleaser.rate_my_leaser_backend.dtos.UserResponse;
 import com.ratemyleaser.rate_my_leaser_backend.exceptions.EmailAlreadyExistsException;
 import com.ratemyleaser.rate_my_leaser_backend.mappers.UserMapper;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
@@ -43,7 +44,7 @@ public class UserServiceUnitTest {
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User expectedUser = userService.registerUser(request);
+        UserResponse expectedUser = userService.registerUser(request);
 
         verify(userRepository).existsByEmail(user.getEmail());
         verify(userRepository, times(1)).save(any(User.class));
@@ -52,7 +53,6 @@ public class UserServiceUnitTest {
         assertThat(expectedUser.getFirstName()).isEqualTo(user.getFirstName());
         assertThat(expectedUser.getLastName()).isEqualTo(user.getLastName());
         assertThat(expectedUser.getEmail()).isEqualTo(user.getEmail());
-        assertThat(expectedUser.getPassword()).isEqualTo(user.getPassword());
         assertThat(expectedUser.getPhoneNumber()).isEqualTo(user.getPhoneNumber());
         assertThat(expectedUser.getUserName()).isEqualTo(user.getUserName());
         assertThat(expectedUser.isAgent()).isFalse();
