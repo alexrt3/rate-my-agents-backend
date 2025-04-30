@@ -31,9 +31,6 @@ public class UserRegistrationRequest {
     private String password;
 
     @NotBlank
-    private String userName;
-
-    @NotBlank
     private String phoneNumber;
 
     private boolean isAgent;

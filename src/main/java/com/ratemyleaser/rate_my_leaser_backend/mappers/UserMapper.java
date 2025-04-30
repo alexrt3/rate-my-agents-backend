@@ -12,7 +12,6 @@ public class UserMapper {
                 .email(dto.getEmail())
                 .password(dto.getPassword())
                 .phoneNumber(dto.getPhoneNumber())
-                .userName(dto.getUserName())
                 .isAgent(dto.isAgent())
                 .build();
     }
@@ -24,7 +23,6 @@ public class UserMapper {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
-                .userName(user.getUserName())
                 .isAgent(user.isAgent())
                 .createdAt(user.getCreatedAt())
                 .build();

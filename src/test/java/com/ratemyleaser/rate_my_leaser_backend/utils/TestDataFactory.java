@@ -11,7 +11,6 @@ public class TestDataFactory {
                 .lastName("Smith")
                 .email("test@test.com")
                 .password("password123")
-                .userName("testUser")
                 .phoneNumber("1234567890")
                 .isAgent(false)
                 .build();
@@ -23,7 +22,6 @@ public class TestDataFactory {
                 .lastName("Smith")
                 .email("test@test.com")
                 .password("password123")
-                .userName("testUser")
                 .phoneNumber("1234567890")
                 .isAgent(false)
                 .build();
@@ -34,7 +32,6 @@ public class TestDataFactory {
                 .firstName("John")
                 .lastName("Smith")
                 .email("test@test.com")
-                .userName("testUser")
                 .phoneNumber("1234567890")
                 .isAgent(false)
                 .createdAt(null)

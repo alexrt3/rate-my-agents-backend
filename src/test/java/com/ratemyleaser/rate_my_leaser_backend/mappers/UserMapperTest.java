@@ -23,7 +23,6 @@ public class UserMapperTest {
         assertThat(user.getEmail()).isEqualTo(dto.getEmail());
         assertThat(user.getPassword()).isEqualTo(dto.getPassword());
         assertThat(user.getPhoneNumber()).isEqualTo(dto.getPhoneNumber());
-        assertThat(user.getUserName()).isEqualTo(dto.getUserName());
         assertThat(user.isAgent()).isEqualTo(dto.isAgent());
     }
 
@@ -40,7 +39,6 @@ public class UserMapperTest {
         assertThat(user.getLastName()).isEqualTo(dto.getLastName());
         assertThat(user.getEmail()).isEqualTo(dto.getEmail());
         assertThat(user.getPhoneNumber()).isEqualTo(dto.getPhoneNumber());
-        assertThat(user.getUserName()).isEqualTo(dto.getUserName());
         assertThat(user.isAgent()).isEqualTo(dto.isAgent());
         assertThat(user.getCreatedAt()).isEqualTo(dto.getCreatedAt());
     }

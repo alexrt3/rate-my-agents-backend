@@ -54,7 +54,6 @@ public class UserServiceUnitTest {
         assertThat(expectedUser.getLastName()).isEqualTo(user.getLastName());
         assertThat(expectedUser.getEmail()).isEqualTo(user.getEmail());
         assertThat(expectedUser.getPhoneNumber()).isEqualTo(user.getPhoneNumber());
-        assertThat(expectedUser.getUserName()).isEqualTo(user.getUserName());
         assertThat(expectedUser.isAgent()).isFalse();
     }
 

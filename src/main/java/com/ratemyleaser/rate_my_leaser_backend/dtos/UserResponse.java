@@ -23,7 +23,6 @@ public class UserResponse {
     private String lastName;
     private String email;
     private String phoneNumber;
-    private String userName;
     @JsonProperty("isAgent")
     private boolean isAgent;
     private LocalDateTime createdAt;

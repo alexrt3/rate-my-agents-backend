@@ -34,7 +34,6 @@ public class UserRepositoryUnitTest {
         assertThat(retrievedUser.get().getFirstName()).isEqualTo(user.getFirstName());
         assertThat(retrievedUser.get().getLastName()).isEqualTo(user.getLastName());
         assertThat(retrievedUser.get().getEmail()).isEqualTo(user.getEmail());
-        assertThat(retrievedUser.get().getUserName()).isEqualTo(user.getUserName());
         assertThat(retrievedUser.get().getPassword()).isEqualTo(user.getPassword());
         assertThat(retrievedUser.get().getPhoneNumber()).isEqualTo(user.getPhoneNumber());
         assertThat(retrievedUser.get().isAgent()).isEqualTo(user.isAgent());
@@ -63,7 +62,6 @@ public class UserRepositoryUnitTest {
         assertThat(retrievedUser.get().getFirstName()).isEqualTo(user.getFirstName());
         assertThat(retrievedUser.get().getLastName()).isEqualTo(user.getLastName());
         assertThat(retrievedUser.get().getEmail()).isEqualTo(user.getEmail());
-        assertThat(retrievedUser.get().getUserName()).isEqualTo(user.getUserName());
         assertThat(retrievedUser.get().getPassword()).isEqualTo(user.getPassword());
         assertThat(retrievedUser.get().getPhoneNumber()).isEqualTo(user.getPhoneNumber());
         assertThat(retrievedUser.get().isAgent()).isEqualTo(user.isAgent());

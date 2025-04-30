@@ -41,9 +41,6 @@ public class User {
     @Column(name = "phone_number", unique = true, length = 20)
     private String phoneNumber;
 
-    @Column(name = "username", length = 255, unique = true, nullable = false)
-    private String userName;
-
     @Column(name = "is_agent", nullable = false)
     private boolean isAgent;
 

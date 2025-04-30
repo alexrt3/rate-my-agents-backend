@@ -37,7 +37,6 @@ public class UserService {
                     .email(userInfo.getEmail())
                     .password(userInfo.getPassword())
                     .phoneNumber(userInfo.getPhoneNumber())
-                    .userName(userInfo.getUserName())
                     .isAgent(userInfo.isAgent())
                     .build();
 

@@ -27,107 +27,105 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @WebMvcTest(UserController.class)
 public class UserControllerUnitTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @MockBean
-    private UserService userService;
+        @MockBean
+        private UserService userService;
 
-    @Test
-    void shouldReturnUserResponseAfterSuccessfulUserRegistration() throws Exception {
-        UserResponse mockUserReponse = UserResponse.builder()
-                .id(UUID.randomUUID())
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .phoneNumber("1234567890")
-                .userName("johndoe")
-                .isAgent(false)
-                .createdAt(LocalDateTime.now())
-                .build();
+        @Test
+        void shouldReturnUserResponseAfterSuccessfulUserRegistration() throws Exception {
+                UserResponse mockUserReponse = UserResponse.builder()
+                                .id(UUID.randomUUID())
+                                .firstName("John")
+                                .lastName("Doe")
+                                .email("john.doe@example.com")
+                                .phoneNumber("1234567890")
+                                .isAgent(false)
+                                .createdAt(LocalDateTime.now())
+                                .build();
 
-        when(userService.registerUser(any())).thenReturn(mockUserReponse);
+                when(userService.registerUser(any())).thenReturn(mockUserReponse);
 
-        mockMvc.perform(post("/user/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("John"))
-                .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.email").value("john.doe@example.com"))
-                .andExpect(jsonPath("$.userName").value("johndoe"))
-                .andExpect(jsonPath("$.phoneNumber").value("1234567890"))
-                .andExpect(jsonPath("$.isAgent").value(false));
-    }
+                mockMvc.perform(post("/user/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andDo(print())
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.firstName").value("John"))
+                                .andExpect(jsonPath("$.lastName").value("Doe"))
+                                .andExpect(jsonPath("$.email").value("john.doe@example.com"))
+                                .andExpect(jsonPath("$.phoneNumber").value("1234567890"))
+                                .andExpect(jsonPath("$.isAgent").value(false));
+        }
 
-    @Test
-    void shouldReturnBadRequestWhenUserRegistrationFails() throws Exception {
-        when(userService.registerUser(any())).thenReturn(null);
+        @Test
+        void shouldReturnBadRequestWhenUserRegistrationFails() throws Exception {
+                when(userService.registerUser(any())).thenReturn(null);
 
-        mockMvc.perform(post("/user/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-    }
+                mockMvc.perform(post("/user/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andDo(print())
+                                .andExpect(status().isBadRequest());
+        }
 
-    @Test
-    void shouldReturnBadRequestWhenUserRegistrationRequestPayloadIsIncorrect() throws Exception {
-        UserResponse mockUserReponse = UserResponse.builder()
-                .id(UUID.randomUUID())
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .phoneNumber("1234567890")
-                .userName("johndoe")
-                .isAgent(false)
-                .createdAt(LocalDateTime.now())
-                .build();
+        @Test
+        void shouldReturnBadRequestWhenUserRegistrationRequestPayloadIsIncorrect() throws Exception {
+                UserResponse mockUserReponse = UserResponse.builder()
+                                .id(UUID.randomUUID())
+                                .firstName("John")
+                                .lastName("Doe")
+                                .email("john.doe@example.com")
+                                .phoneNumber("1234567890")
+                                .isAgent(false)
+                                .createdAt(LocalDateTime.now())
+                                .build();
 
-        when(userService.registerUser(any())).thenReturn(mockUserReponse);
+                when(userService.registerUser(any())).thenReturn(mockUserReponse);
 
-        mockMvc.perform(post("/user/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(badEmailJson))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-    }
+                mockMvc.perform(post("/user/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(badEmailJson))
+                                .andDo(print())
+                                .andExpect(status().isBadRequest());
+        }
 
-    @Test
-    void shouldReturnConflictIfEmailAlreadyExists() throws Exception {
+        @Test
+        void shouldReturnConflictIfEmailAlreadyExists() throws Exception {
 
-        when(userService.registerUser(any())).thenThrow(new EmailAlreadyExistsException("john.doe@example.com"));
+                when(userService.registerUser(any()))
+                                .thenThrow(new EmailAlreadyExistsException("john.doe@example.com"));
 
-        mockMvc.perform(post("/user/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
-                .andDo(print())
-                .andExpect(status().isConflict());
-    }
+                mockMvc.perform(post("/user/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json))
+                                .andDo(print())
+                                .andExpect(status().isConflict());
+        }
 
-    public String json = """
-            {
-              "firstName": "John",
-              "lastName": "Doe",
-              "email": "john.doe@example.com",
-              "password": "securePass123",
-              "userName": "johndoe",
-              "phoneNumber": "1234567890",
-              "isAgent": false
-            }
-            """;
+        public String json = """
+                        {
+                          "firstName": "John",
+                          "lastName": "Doe",
+                          "email": "john.doe@example.com",
+                          "password": "securePass123",
+                          "userName": "johndoe",
+                          "phoneNumber": "1234567890",
+                          "isAgent": false
+                        }
+                        """;
 
-    public String badEmailJson = """
-            {
-              "firstName": "John",
-              "lastName": "Doe",
-              "email": "bademail.com",
-              "password": "securePass123",
-              "userName": "johndoe",
-              "phoneNumber": "1234567890",
-              "isAgent": false
-            }
-            """;
+        public String badEmailJson = """
+                        {
+                          "firstName": "John",
+                          "lastName": "Doe",
+                          "email": "bademail.com",
+                          "password": "securePass123",
+                          "userName": "johndoe",
+                          "phoneNumber": "1234567890",
+                          "isAgent": false
+                        }
+                        """;
 
 }
