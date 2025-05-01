@@ -26,7 +26,7 @@ public class UserService {
     }
 
     public UserResponse registerUser(UserRegistrationRequest userInfo) {
-        if (userRepository.existsByEmail(userInfo.getEmail())) {
+        if (userRepository.existsByEmail(userInfo.getEmail().toLowerCase())) {
             throw new EmailAlreadyExistsException(userInfo.getEmail());
         }
 
@@ -34,9 +34,9 @@ public class UserService {
 
         try {
             User user = User.builder()
-                    .firstName(userInfo.getFirstName())
-                    .lastName(userInfo.getLastName())
-                    .email(userInfo.getEmail())
+                    .firstName(userInfo.getFirstName().toLowerCase())
+                    .lastName(userInfo.getLastName().toLowerCase())
+                    .email(userInfo.getEmail().toLowerCase())
                     .password(hashedPassword)
                     .phoneNumber(userInfo.getPhoneNumber())
                     .isAgent(userInfo.isAgent())

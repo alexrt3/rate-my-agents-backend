@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.ratemyleaser.rate_my_leaser_backend.config.SecurityConfig;
 import com.ratemyleaser.rate_my_leaser_backend.dtos.UserResponse;
 import com.ratemyleaser.rate_my_leaser_backend.exceptions.EmailAlreadyExistsException;
 import com.ratemyleaser.rate_my_leaser_backend.services.UserService;
@@ -24,8 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 
 @WebMvcTest(UserController.class)
+@Import(SecurityConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class UserControllerUnitTest {
 
