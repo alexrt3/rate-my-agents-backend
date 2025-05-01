@@ -10,6 +10,7 @@ import com.ratemyleaser.rate_my_leaser_backend.exceptions.EmailAlreadyExistsExce
 import com.ratemyleaser.rate_my_leaser_backend.mappers.UserMapper;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
 import com.ratemyleaser.rate_my_leaser_backend.repositories.UserRepository;
+import com.ratemyleaser.utilities.HashPassword;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,17 +26,18 @@ public class UserService {
     }
 
     public UserResponse registerUser(UserRegistrationRequest userInfo) {
-
         if (userRepository.existsByEmail(userInfo.getEmail())) {
             throw new EmailAlreadyExistsException(userInfo.getEmail());
         }
+
+        String hashedPassword = HashPassword.hash(userInfo.getPassword());
 
         try {
             User user = User.builder()
                     .firstName(userInfo.getFirstName())
                     .lastName(userInfo.getLastName())
                     .email(userInfo.getEmail())
-                    .password(userInfo.getPassword())
+                    .password(hashedPassword)
                     .phoneNumber(userInfo.getPhoneNumber())
                     .isAgent(userInfo.isAgent())
                     .build();
