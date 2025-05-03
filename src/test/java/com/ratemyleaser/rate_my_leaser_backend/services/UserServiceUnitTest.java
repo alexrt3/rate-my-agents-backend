@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ratemyleaser.rate_my_leaser_backend.dtos.UserRegistrationRequest;
 import com.ratemyleaser.rate_my_leaser_backend.dtos.UserResponse;
 import com.ratemyleaser.rate_my_leaser_backend.exceptions.EmailAlreadyExistsException;
+import com.ratemyleaser.rate_my_leaser_backend.exceptions.PhoneNumberAlreadyExistsException;
 import com.ratemyleaser.rate_my_leaser_backend.mappers.UserMapper;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
 import com.ratemyleaser.rate_my_leaser_backend.repositories.UserRepository;
@@ -66,6 +67,19 @@ public class UserServiceUnitTest {
         assertThatThrownBy(() -> userService.registerUser(request))
                 .isInstanceOf(EmailAlreadyExistsException.class)
                 .hasMessage("The email test@test.com is already in use.");
+
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenRegisteringUserIsCalledAndPhoneNumberExists() {
+        UserRegistrationRequest request = TestDataFactory.createUserRegistrationRequest();
+
+        when(userRepository.existsByPhoneNumber(anyString())).thenReturn(true);
+
+        assertThatThrownBy(() -> userService.registerUser(request))
+                .isInstanceOf(PhoneNumberAlreadyExistsException.class)
+                .hasMessage("The phonenumber 1234567890 is already in use.");
 
         verify(userRepository, never()).save(any(User.class));
     }

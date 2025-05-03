@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.ratemyleaser.rate_my_leaser_backend.dtos.UserRegistrationRequest;
 import com.ratemyleaser.rate_my_leaser_backend.dtos.UserResponse;
 import com.ratemyleaser.rate_my_leaser_backend.exceptions.EmailAlreadyExistsException;
+import com.ratemyleaser.rate_my_leaser_backend.exceptions.PhoneNumberAlreadyExistsException;
 import com.ratemyleaser.rate_my_leaser_backend.mappers.UserMapper;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
 import com.ratemyleaser.rate_my_leaser_backend.repositories.UserRepository;
@@ -28,6 +29,10 @@ public class UserService {
     public UserResponse registerUser(UserRegistrationRequest userInfo) {
         if (userRepository.existsByEmail(userInfo.getEmail().toLowerCase())) {
             throw new EmailAlreadyExistsException(userInfo.getEmail());
+        }
+
+        if (userRepository.existsByPhoneNumber(userInfo.getPhoneNumber())) {
+            throw new PhoneNumberAlreadyExistsException(userInfo.getPhoneNumber());
         }
 
         String hashedPassword = HashPassword.hash(userInfo.getPassword());
