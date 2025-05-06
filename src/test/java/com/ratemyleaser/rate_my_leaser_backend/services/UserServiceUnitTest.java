@@ -98,4 +98,44 @@ public class UserServiceUnitTest {
         verify(userRepository).existsByEmail(user.getEmail());
         verify(userRepository).save(any(User.class));
     }
+
+    @Test
+    public void shouldReturnFalseIfUserEmailDoesNotExists() {
+        String testEmail = "test@test.com";
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        boolean result = userService.doesUserEmailExist(testEmail);
+
+        verify(userRepository).existsByEmail(testEmail);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void shouldReturnTrueIfUserEmailExists() {
+        String testEmail = "test@test.com";
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+        boolean result = userService.doesUserEmailExist(testEmail);
+
+        verify(userRepository).existsByEmail(testEmail);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void shouldReturnTrueIfUserPhoneNumberExists() {
+        String testPhoneNumber = "1234567890";
+        when(userRepository.existsByPhoneNumber(anyString())).thenReturn(true);
+        boolean result = userService.doesUserPhoneNumberExist(testPhoneNumber);
+
+        verify(userRepository).existsByPhoneNumber(testPhoneNumber);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void shouldReturnFalseIfUserPhoneNumberDoesNotExists() {
+        String testPhoneNumber = "1234567890";
+        when(userRepository.existsByPhoneNumber(anyString())).thenReturn(false);
+        boolean result = userService.doesUserPhoneNumberExist(testPhoneNumber);
+
+        verify(userRepository).existsByPhoneNumber(testPhoneNumber);
+        assertThat(result).isFalse();
+    }
 }

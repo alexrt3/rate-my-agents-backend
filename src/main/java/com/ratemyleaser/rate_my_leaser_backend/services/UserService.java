@@ -58,4 +58,25 @@ public class UserService {
             throw e;
         }
     }
+
+    public Boolean doesUserEmailExist(String userEmail) {
+        Boolean userEmailExists = userRepository.existsByEmail(userEmail);
+        if (userEmailExists) {
+            log.info("Email {} already exists", userEmail);
+        } else {
+            log.info("Email {} does not exist", userEmail);
+        }
+        return userEmailExists;
+    }
+
+    public Boolean doesUserPhoneNumberExist(String userPhoneNumber) {
+        Boolean userPhoneNumberExists = userRepository.existsByPhoneNumber(userPhoneNumber);
+
+        if (userPhoneNumberExists) {
+            log.info("Phone number {} already exists", userPhoneNumber);
+        } else {
+            log.info("Phone number {} does not exist", userPhoneNumber);
+        }
+        return userPhoneNumberExists;
+    }
 }

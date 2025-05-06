@@ -8,19 +8,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import com.ratemyleaser.rate_my_leaser_backend.config.SecurityConfig;
 import com.ratemyleaser.rate_my_leaser_backend.dtos.UserResponse;
 import com.ratemyleaser.rate_my_leaser_backend.exceptions.EmailAlreadyExistsException;
 import com.ratemyleaser.rate_my_leaser_backend.services.UserService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -107,6 +108,58 @@ public class UserControllerUnitTest {
                                 .content(json))
                                 .andDo(print())
                                 .andExpect(status().isConflict());
+        }
+
+        @Test
+        void shouldReturnTrueIfUserEmailExists() throws Exception {
+                boolean mockUserReponse = true;
+
+                when(userService.doesUserEmailExist(any())).thenReturn(mockUserReponse);
+
+                mockMvc.perform(get("/user/email")
+                                .param("userEmail", "john.doe@example.com"))
+                                .andDo(print())
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("true"));
+        }
+
+        @Test
+        void shouldReturnFalseIfUserEmailDoesNotExists() throws Exception {
+                boolean mockUserReponse = false;
+
+                when(userService.doesUserEmailExist(any())).thenReturn(mockUserReponse);
+
+                mockMvc.perform(get("/user/email")
+                                .param("userEmail", "john.doe@example.com"))
+                                .andDo(print())
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("false"));
+        }
+
+        @Test
+        void shouldReturnTrueIfUserPhoneNumberExists() throws Exception {
+                boolean mockUserReponse = true;
+
+                when(userService.doesUserPhoneNumberExist(any())).thenReturn(mockUserReponse);
+
+                mockMvc.perform(get("/user/phonenumber")
+                                .param("userPhoneNumber", "1234567890"))
+                                .andDo(print())
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("true"));
+        }
+
+        @Test
+        void shouldReturnFalseIfUserPhoneNumberDoesNotExists() throws Exception {
+                boolean mockUserReponse = false;
+
+                when(userService.doesUserPhoneNumberExist(any())).thenReturn(mockUserReponse);
+
+                mockMvc.perform(get("/user/phonenumber")
+                                .param("userPhoneNumber", "1234567890"))
+                                .andDo(print())
+                                .andExpect(status().isOk())
+                                .andExpect(content().string("false"));
         }
 
         public String json = """
