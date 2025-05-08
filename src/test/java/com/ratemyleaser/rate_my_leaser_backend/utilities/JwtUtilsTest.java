@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +107,7 @@ public class JwtUtilsTest {
     }
 
     @Test
-    public void tokenShouldExpireWhenExpirationTimeIsReached() {
+    public void tokenShouldThrowExceptionWhenExpirationTimeIsReached() {
         String email = "test@email.com";
         long customExpiration = 100;
         String token = jwtUtils.generateTokenWithCustomExpiration(email, customExpiration);
@@ -120,5 +121,20 @@ public class JwtUtilsTest {
         assertThrows(ExpiredJwtException.class, () -> {
             jwtUtils.validateToken(token);
         });
+    }
+
+    @Test
+    public void tokenShouldNotThrowExceptionWhenExpirationTimeIsNotReached() {
+        String email = "test@email.com";
+        long customExpiration = 10000;
+        String token = jwtUtils.generateTokenWithCustomExpiration(email, customExpiration);
+
+        try {
+            Thread.sleep(200);
+            boolean isValid = jwtUtils.validateToken(token);
+            assertTrue(isValid);
+        } catch (Exception e) {
+            fail("No exception should be thrown, but got: " + e);
+        }
     }
 }
