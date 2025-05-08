@@ -1,4 +1,4 @@
-package com.ratemyleaser.utilities;
+package com.ratemyleaser.rate_my_leaser_backend.utilities;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

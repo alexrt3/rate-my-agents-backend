@@ -11,7 +11,7 @@ import com.ratemyleaser.rate_my_leaser_backend.exceptions.PhoneNumberAlreadyExis
 import com.ratemyleaser.rate_my_leaser_backend.mappers.UserMapper;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
 import com.ratemyleaser.rate_my_leaser_backend.repositories.UserRepository;
-import com.ratemyleaser.utilities.HashPassword;
+import com.ratemyleaser.rate_my_leaser_backend.utilities.HashPassword;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.ratemyleaser.utilities;
+package com.ratemyleaser.rate_my_leaser_backend.utilities;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
