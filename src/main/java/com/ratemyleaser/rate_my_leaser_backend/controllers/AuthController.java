@@ -14,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ratemyleaser.rate_my_leaser_backend.dtos.AuthResponse;
 import com.ratemyleaser.rate_my_leaser_backend.dtos.LoginRequest;
+import com.ratemyleaser.rate_my_leaser_backend.dtos.UserRegistrationRequest;
+import com.ratemyleaser.rate_my_leaser_backend.dtos.UserResponse;
 import com.ratemyleaser.rate_my_leaser_backend.services.AuthService;
 
 import jakarta.validation.Valid;
@@ -28,6 +30,17 @@ public class AuthController {
     @Autowired
     public AuthController(AuthService authService) {
         this.authService = authService;
+    }
+
+    @PostMapping(path = "/register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserResponse> registerUser(@Valid @RequestBody UserRegistrationRequest userRegistrationInfo) {
+        UserResponse registeredUserResponse = authService.registerUser(userRegistrationInfo);
+
+        if (registeredUserResponse == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(registeredUserResponse);
     }
 
     @PostMapping(path = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

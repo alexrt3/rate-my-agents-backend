@@ -1,10 +1,14 @@
 package com.ratemyleaser.rate_my_leaser_backend.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
 
@@ -13,9 +17,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataAccessException;
 
 import com.ratemyleaser.rate_my_leaser_backend.dtos.AuthResponse;
+import com.ratemyleaser.rate_my_leaser_backend.dtos.UserRegistrationRequest;
+import com.ratemyleaser.rate_my_leaser_backend.dtos.UserResponse;
+import com.ratemyleaser.rate_my_leaser_backend.exceptions.EmailAlreadyExistsException;
+import com.ratemyleaser.rate_my_leaser_backend.exceptions.PhoneNumberAlreadyExistsException;
 import com.ratemyleaser.rate_my_leaser_backend.exceptions.UserNotFoundException;
+import com.ratemyleaser.rate_my_leaser_backend.mappers.UserMapper;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
 import com.ratemyleaser.rate_my_leaser_backend.repositories.UserRepository;
 import com.ratemyleaser.rate_my_leaser_backend.utilities.HashPassword;
@@ -58,11 +68,11 @@ public class AuthServiceUnitTest {
 
         AuthResponse actualAuthResponse = authService.authenticateUser(user.getEmail(), hashedPassword);
 
-        assertEquals(authResponse.getToken(), actualAuthResponse.getToken());
-        assertEquals(authResponse.getEmail(), actualAuthResponse.getEmail());
-        assertEquals(authResponse.getFirstName(), actualAuthResponse.getFirstName());
-        assertEquals(authResponse.getLastName(), actualAuthResponse.getLastName());
-        assertEquals(authResponse.isAgent(), actualAuthResponse.isAgent());
+        assertThat(actualAuthResponse.getToken()).isEqualTo(authResponse.getToken());
+        assertThat(actualAuthResponse.getEmail()).isEqualTo(authResponse.getEmail());
+        assertThat(actualAuthResponse.getFirstName()).isEqualTo(authResponse.getFirstName());
+        assertThat(actualAuthResponse.getLastName()).isEqualTo(authResponse.getLastName());
+        assertThat(actualAuthResponse.isAgent()).isEqualTo(authResponse.isAgent());
     }
 
     @Test
@@ -110,5 +120,67 @@ public class AuthServiceUnitTest {
         assertThrows(RuntimeException.class, () -> {
             authService.authenticateUser(user.getEmail(), "");
         });
+    }
+
+    @Test
+    public void shouldReturnSuccesfullyRegisteredUser() {
+        UserRegistrationRequest request = TestDataFactory.createUserRegistrationRequest();
+        User user = UserMapper.toEntity(request);
+
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        UserResponse expectedUser = authService.registerUser(request);
+
+        verify(userRepository).existsByEmail(user.getEmail());
+        verify(userRepository, times(1)).save(any(User.class));
+
+        assertThat(expectedUser).isNotNull();
+        assertThat(expectedUser.getFirstName()).isEqualTo(user.getFirstName());
+        assertThat(expectedUser.getLastName()).isEqualTo(user.getLastName());
+        assertThat(expectedUser.getEmail()).isEqualTo(user.getEmail());
+        assertThat(expectedUser.getPhoneNumber()).isEqualTo(user.getPhoneNumber());
+        assertThat(expectedUser.isAgent()).isFalse();
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenRegisteringUserIsCalledAndEmailExists() {
+        UserRegistrationRequest request = TestDataFactory.createUserRegistrationRequest();
+
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+
+        assertThatThrownBy(() -> authService.registerUser(request))
+                .isInstanceOf(EmailAlreadyExistsException.class)
+                .hasMessage("The email test@test.com is already in use.");
+
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenRegisteringUserIsCalledAndPhoneNumberExists() {
+        UserRegistrationRequest request = TestDataFactory.createUserRegistrationRequest();
+
+        when(userRepository.existsByPhoneNumber(anyString())).thenReturn(true);
+
+        assertThatThrownBy(() -> authService.registerUser(request))
+                .isInstanceOf(PhoneNumberAlreadyExistsException.class)
+                .hasMessage("The phonenumber 1234567890 is already in use.");
+
+        verify(userRepository, never()).save(any(User.class));
+    }
+
+    @Test
+    public void shouldThrowDataAccessExceptionWhenRegisteringUserAndDbIsDown() {
+        User user = TestDataFactory.createUser();
+        UserRegistrationRequest request = TestDataFactory.createUserRegistrationRequest();
+
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenThrow(new DataAccessException("Simulated DB failure") {
+        });
+
+        assertThatThrownBy(() -> authService.registerUser(request)).isInstanceOf(DataAccessException.class);
+
+        verify(userRepository).existsByEmail(user.getEmail());
+        verify(userRepository).save(any(User.class));
     }
 }
