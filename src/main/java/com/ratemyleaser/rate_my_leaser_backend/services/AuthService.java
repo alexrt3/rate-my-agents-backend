@@ -66,7 +66,7 @@ public class AuthService {
         User user = userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found."));
 
-        if (!HashPassword.matches(user.getPassword(), password)) {
+        if (!HashPassword.matches(password, user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
