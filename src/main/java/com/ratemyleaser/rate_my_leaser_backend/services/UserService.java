@@ -1,7 +1,5 @@
 package com.ratemyleaser.rate_my_leaser_backend.services;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 import com.ratemyleaser.rate_my_leaser_backend.dtos.UserRegistrationRequest;
@@ -21,10 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
-    public Optional<User> loginByEmail(String email, String password) {
-        return userRepository.findUserByEmail(email).filter(user -> user.getPassword().equals(password));
-    }
 
     public UserResponse registerUser(UserRegistrationRequest userInfo) {
         if (userRepository.existsByEmail(userInfo.getEmail().toLowerCase())) {
