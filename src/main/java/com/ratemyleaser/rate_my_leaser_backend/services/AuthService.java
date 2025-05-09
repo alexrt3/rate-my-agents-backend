@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2Res
 import org.springframework.stereotype.Service;
 
 import com.ratemyleaser.rate_my_leaser_backend.dtos.AuthResponse;
+import com.ratemyleaser.rate_my_leaser_backend.exceptions.UserNotFoundException;
 import com.ratemyleaser.rate_my_leaser_backend.models.User;
 import com.ratemyleaser.rate_my_leaser_backend.repositories.UserRepository;
 import com.ratemyleaser.rate_my_leaser_backend.utilities.HashPassword;
@@ -27,21 +28,20 @@ public class AuthService {
     private final JwtUtils jwtUtils;
 
     public AuthResponse authenticateUser(String email, String password) {
-        Optional<User> userOpt = userRepository.findUserByEmail(email);
+        User user = userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User with email " + email + " not found."));
 
-        if (userOpt.isPresent() && HashPassword.matches(userOpt.get().getPassword(), password)) {
-            User user = userOpt.get();
-            String token = jwtUtils.generateToken(email);
-            return AuthResponse.builder()
-                    .token(token)
-                    .email(user.getEmail())
-                    .firstName(user.getFirstName())
-                    .lastName(user.getLastName())
-                    .isAgent(user.isAgent())
-                    .build();
-        } else {
+        if (!HashPassword.matches(user.getPassword(), password)) {
             throw new RuntimeException("Invalid credentials");
         }
 
+        String token = jwtUtils.generateToken(email);
+        return AuthResponse.builder()
+                .token(token)
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .isAgent(user.isAgent())
+                .build();
     }
 }
